@@ -1,0 +1,22 @@
+/* Custom styles to complement Bootstrap */
+.bg-success {
+    background-color: #2E8B57 !important;
+}
+
+.text-success {
+    color: #2E8B57 !important;
+}
+
+.btn-success {
+    background-color: #2E8B57;
+    border-color: #2E8B57;
+}
+
+.btn-success:hover {
+    background-color: #006400;
+    border-color: #006400;
+}
+
+.border-success {
+    border-color: #2E8B57 !important;
+} 
