@@ -10,14 +10,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
-        <div class="container">
-            <a class="navbar-brand" href="index.php">Library System</a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link text-white" href="index.php?controller=auth&action=login">Login</a>
-            </div>
-        </div>
-    </nav>
+    <?php include '/xampp/htdocs/Cohort-PHP-Assignments/LMS/templates/header.php'; ?>
 
     <!-- Hero Section -->
     <div class="bg-light py-5">
@@ -26,7 +19,7 @@
                 <div class="col-lg-6 text-center text-lg-start">
                     <h1 class="display-4 fw-bold text-success mb-4">Welcome to Our Library</h1>
                     <p class="lead mb-4">Your Gateway to Knowledge</p>
-                    <a href="index.php?controller=auth&action=login" class="btn btn-success btn-lg px-4">Get Started</a>
+                    <a href="../views/users/login.php" class="btn btn-success btn-lg px-4">Get Started</a>
                 </div>
                 <div class="col-lg-6">
                     <img src="../assets/book.jpg" class="img-fluid rounded" alt="Library">
@@ -65,6 +58,8 @@
             </div>
         </div>
     </div>
+
+    <?php include '../templates/footer.php'; ?>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

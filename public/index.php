@@ -11,7 +11,7 @@ require_once '../controllers/AuthController.php';
 $controller = isset($_GET['controller']) ? $_GET['controller'] : 'home';
 $action = isset($_GET['action']) ? $_GET['action'] : 'index';
 
-switch($controller) {
+switch ($controller) {
     case 'home':
         $controller = new HomeController();
         break;
@@ -28,7 +28,7 @@ switch($controller) {
         $controller = new HomeController();
 }
 
-if(method_exists($controller, $action)) {
+if (method_exists($controller, $action)) {
     $controller->$action();
 } else {
     $controller->index();
