@@ -1,20 +1,11 @@
 <?php
-class Database
-{
-    private $host = "localhost";
-    private $username = "root";
-    private $password = "";
-    private $database = "library_management";
-    public $conn;
+$host = "localhost";
+$username = "root";
+$password = "";
+$database = "library_management";
 
-    public function connect()
-    {
-        $this->conn = mysqli_connect($this->host, $this->username, $this->password, $this->database);
+$conn = mysqli_connect($host, $username, $password, $database);
 
-        if (!$this->conn) {
-            die("Connection failed: " . mysqli_connect_error());
-        }
-
-        return $this->conn;
-    }
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
 }

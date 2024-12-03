@@ -35,7 +35,7 @@
             <div class="col-md-4">
                 <div class="card h-100 border-success">
                     <div class="card-body text-center">
-                        <h3 class="card-title h4 text-success">Browse Books</h3>
+                        <h3 class="card-title h4 text-success"><a href="../views/books/browse.php">Browse Books</a></h3>
                         <p class="card-text">Access our extensive collection</p>
                     </div>
                 </div>
@@ -66,3 +66,6 @@
 </body>
 
 </html>
+
+
+
