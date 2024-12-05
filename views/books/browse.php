@@ -110,3 +110,5 @@ if (!$result) {
 </style>
 
 <?php require_once("/xampp/htdocs/Cohort-PHP-Assignments/LMS/templates/footer.php");
+
+
