@@ -53,3 +53,4 @@ CREATE TABLE books (
     status ENUM('available', 'borrowed') DEFAULT 'available',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+

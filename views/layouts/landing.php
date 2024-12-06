@@ -22,7 +22,7 @@
                     <a href="../views/users/login.php" class="btn btn-success btn-lg px-4">Get Started</a>
                 </div>
                 <div class="col-lg-6">
-                    <img src="../assets/book.jpg" class="img-fluid rounded" alt="Library">
+                    <img src="../../assets/book.jpg" class="img-fluid rounded" alt="Library">
                 </div>
             </div>
         </div>
@@ -32,40 +32,64 @@
     <div class="container py-5">
         <h2 class="text-center text-success mb-5">Our Features</h2>
         <div class="row g-4">
+            <!-- Browse Books Card -->
             <div class="col-md-4">
-                <div class="card h-100 border-success">
-                    <div class="card-body text-center">
-                        <h3 class="card-title h4 text-success"><a href="../views/books/browse.php">Browse Books</a></h3>
-                        <p class="card-text">Access our extensive collection</p>
+                <a href="/Cohort-PHP-Assignments/LMS/views/books/browse.php" class="text-decoration-none">
+                    <div class="card h-100 border-success hover-card">
+                        <div class="card-body text-center">
+                            <h3 class="card-title h4 text-success">Browse Books</h3>
+                            <p class="card-text text-dark">Access our extensive collection</p>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
+
+            <!-- Easy Borrowing Card -->
             <div class="col-md-4">
-                <div class="card h-100 border-success">
-                    <div class="card-body text-center">
-                        <h3 class="card-title h4 text-success">Easy Borrowing</h3>
-                        <p class="card-text">Simple checkout process</p>
+                <a href="../views/books/borrow.php" class="text-decoration-none">
+                    <div class="card h-100 border-success hover-card">
+                        <div class="card-body text-center">
+                            <h3 class="card-title h4 text-success">Easy Borrowing</h3>
+                            <p class="card-text text-dark">Simple checkout process</p>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
+
+            <!-- Digital Catalog Card -->
             <div class="col-md-4">
-                <div class="card h-100 border-success">
-                    <div class="card-body text-center">
-                        <h3 class="card-title h4 text-success">Digital Catalog</h3>
-                        <p class="card-text">Search and find books easily</p>
+                <a href="../views/books/catalog.php" class="text-decoration-none">
+                    <div class="card h-100 border-success hover-card">
+                        <div class="card-body text-center">
+                            <h3 class="card-title h4 text-success">Digital Catalog</h3>
+                            <p class="card-text text-dark">Search and find books easily</p>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
     </div>
 
-    <?php include '../templates/footer.php'; ?>
+    <?php include '../../templates/footer.php'; ?>
+
+    <style>
+        .hover-card {
+            transition: all 0.3s ease;
+        }
+
+        .hover-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        .text-decoration-none:hover {
+            text-decoration: none !important;
+        }
+    </style>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
-
-
-

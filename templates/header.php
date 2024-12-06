@@ -14,20 +14,15 @@
     <!-- Bootstrap Icon CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <style>
-        .profile-pic>img {
-            border-radius: 40px;
-            width: 40px;
-            height: 40px;
-        }
-    </style>
     <title>Document</title>
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success shadow py-3">
         <div class="container">
-            <a class="navbar-brand" href="index.php"><img class="w-50 h-50" src="../assets/logo.webp" /></a>
+            <a class="navbar-brand" href="/Cohort-PHP-Assignments/LMS/views/layouts/landing.php">
+                <i class="bi-book fs-3"></i>
+            </a>
 
             <!-- Hamburger button for mobile -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
@@ -36,26 +31,43 @@
 
             <!-- Collapsible content -->
             <div class="collapse navbar-collapse" id="navbarContent">
-                <div class="navbar-nav ms-3">
-                    <a class="nav-link text-white" href="../views/about.php">About</a>
-                    <a class="nav-link text-white" href="../views/contact.php">Contact</a>
-                </div>
-                <div class="navbar-nav ms-auto">
-                    <div class="profile-pic">
-                        <img src="../assets/profile.png" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><button class="dropdown-item" type="button">Amarachi Kalu</button></li>
-                            <li><button class="dropdown-item" type="button"><a href="../views/users/login.php" class="text-decoration-none text-dark">Login</a></button></li>
+                <ul class="navbar-nav ms-3">
+                    <li class="nav-item">
+                        <a class="nav-link text-white fs-5" href="/Cohort-PHP-Assignments/LMS/views/about.php">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white fs-5" href="/Cohort-PHP-Assignments/LMS/views/contact.php">Contact</a>
+                    </li>
+                </ul>
+
+                <!-- Profile Dropdown -->
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white d-flex align-items-center fs-5"
+                            href="#"
+                            id="navbarDropdown"
+                            role="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="bi bi-person-circle me-2"></i>
+                            Muotoh Chizoba
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#">Update</a></li>
+                            <li><a class="dropdown-item" href="/Cohort-PHP-Assignments/LMS/views/users/login.php">Admin</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><button class="dropdown-item" type="button"><a href="index.php?controller=auth&action=logout" class="text-decoration-none text-dark">Logout</a></button></li>
+                            <li><a class="dropdown-item" href="/Cohort-PHP-Assignments/LMS/views/users/login.php">Logout</a></li>
                         </ul>
-                    </div>
-                </div>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
 </body>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </html>

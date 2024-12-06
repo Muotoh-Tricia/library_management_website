@@ -5,11 +5,11 @@ class UserController {
     private $user;
     private $db;
 
-    public function __construct() {
-        $database = new Database();
-        $this->db = $database->connect();
-        $this->user = new User($this->db);
-    }
+    // public function __construct() {
+    //     $database = new Database();
+    //     $this->db = $database->connect();
+    //     $this->user = new User($this->db);
+    // }
 
     public function register() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {

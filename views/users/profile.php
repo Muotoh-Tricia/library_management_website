@@ -26,20 +26,22 @@
                     <form method="POST" action="index.php?controller=user&action=updateProfile">
                         <div class="mb-3">
                             <label for="username" class="form-label">Username:</label>
-                            <input type="text" class="form-control" id="username" name="username" 
-                                   value="<?php echo htmlspecialchars($_SESSION['username']); ?>" required>
+                            <input type="text" class="form-control" id="username" name="username"
+                                value="<?php echo htmlspecialchars($_SESSION['username']); ?>" required>
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email:</label>
-                            <input type="email" class="form-control" id="email" name="email" 
-                                   value="<?php echo htmlspecialchars($_SESSION['email']); ?>" required>
+                            <input type="email" class="form-control" id="email" name="email"
+                                value="<?php echo htmlspecialchars($_SESSION['email']); ?>" required>
                         </div>
                         <div class="mb-3">
-                            <label for="new_password" class="form-label">New Password (leave blank to keep current):</label>
+                            <label for="new_password" class="form-label">New Password (leave blank to keep
+                                current):</label>
                             <input type="password" class="form-control" id="new_password" name="new_password">
                         </div>
                         <div class="mb-3">
-                            <label for="current_password" class="form-label">Current Password (required to save changes):</label>
+                            <label for="current_password" class="form-label">Current Password (required to save
+                                changes):</label>
                             <input type="password" class="form-control" id="current_password" name="current_password">
                         </div>
                         <div class="d-grid gap-2">
@@ -79,4 +81,4 @@
             </div>
         </div>
     </div>
-</div> 
+</div>

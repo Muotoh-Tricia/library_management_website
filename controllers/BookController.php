@@ -77,4 +77,43 @@ class BookController
 
         require_once '../views/books/edit.php';
     }
+
+    public function borrow($id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Start session if not already started
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+
+            // Get book details
+            $query = "SELECT * FROM books WHERE id = $id";
+            $result = mysqli_query($this->conn, $query);
+            $book = mysqli_fetch_assoc($result);
+
+            if ($book && $book['status'] === 'available') {
+                // Update book status
+                $update_query = "UPDATE books SET status = 'borrowed' WHERE id = $id";
+
+                // Insert into borrowings table
+                $user_id = $_SESSION['user_id']; // Ensure this session variable is set
+                $borrow_date = date('Y-m-d');
+                $return_date = date('Y-m-d', strtotime('+2 weeks'));
+
+                $borrow_query = "INSERT INTO borrowings (user_id, book_id, borrow_date, return_date, status) 
+                                VALUES ($user_id, $id, '$borrow_date', '$return_date', 'active')";
+
+                if (mysqli_query($this->conn, $update_query) && mysqli_query($this->conn, $borrow_query)) {
+                    $_SESSION['success'] = "Book borrowed successfully";
+                } else {
+                    $_SESSION['error'] = "Error borrowing book: " . mysqli_error($this->conn);
+                }
+            } else {
+                $_SESSION['error'] = "Book is not available for borrowing";
+            }
+            header('Location: index.php?controller=book&action=index');
+            exit();
+        }
+    }
 }
+

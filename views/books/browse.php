@@ -1,28 +1,39 @@
-<?php require_once("/xampp/htdocs/Cohort-PHP-Assignments/LMS/templates/header.php");
-
-require_once '../../config/database.php';
+<?php
+require_once('/xampp/htdocs/Cohort-PHP-Assignments/LMS/templates/header.php');
+require_once('/xampp/htdocs/Cohort-PHP-Assignments/LMS/config/database.php');
 
 if (!$conn) {
     die("Database connection not established.");
 }
 
-$query = "SELECT * FROM books ORDER BY title ASC";
+$search = mysqli_real_escape_string($conn, $_GET['search'] ?? '');
+
+$query = "SELECT * FROM books WHERE title LIKE '%$search%' OR author LIKE '%$search%' OR isbn LIKE '%$search%' ORDER BY title ASC";
 $result = mysqli_query($conn, $query);
 
 if (!$result) {
     die("Query failed: " . mysqli_error($conn));
 }
 ?>
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <div class="container py-5">
     <!-- Search and Filter Section -->
     <div class="row mb-4">
         <div class="col-md-6">
-            <div class="input-group">
-                <input type="text" class="form-control border-success" placeholder="Search books...">
-                <button class="btn btn-success" type="button">Search</button>
-            </div>
+            <form method="GET" action="">
+                <div class="input-group">
+                    <input type="text"
+                        name="search"
+                        class="form-control border-success"
+                        placeholder="Search by title, author, category, or ISBN..."
+                        value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>">
+                    <button class="btn btn-success" type="submit">
+                        <i class="bi bi-search"></i> Search
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -58,9 +69,45 @@ if (!$result) {
                                 </small>
                             </div>
 
-                            <button class="btn btn-success btn-sm w-100 mt-2">
+                            <button class="btn btn-success btn-sm w-100 mt-2" data-bs-toggle="modal" data-bs-target="#borrowModal<?php echo $book['id']; ?>">
                                 Borrow Now
                             </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Borrow Modal -->
+            <div class="modal fade" id="borrowModal<?php echo $book['id']; ?>" tabindex="-1" aria-labelledby="borrowModalLabel<?php echo $book['id']; ?>" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-success text-white">
+                            <h5 class="modal-title" id="borrowModalLabel<?php echo $book['id']; ?>">Borrow Book</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <h4><?php echo htmlspecialchars($book['title']); ?></h4>
+                                <p class="text-muted">By <?php echo htmlspecialchars($book['author']); ?></p>
+                            </div>
+                            <div class="mb-3">
+                                <strong>ISBN:</strong> 
+                                <?php echo htmlspecialchars($book['isbn']); ?>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Availability:</strong>
+                                <p><?php echo htmlspecialchars($book['available_quantity']); ?> of <?php echo htmlspecialchars($book['quantity']); ?> copies available</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Return Date:</strong>
+                                <p class="text-danger"><?php echo date('F j, Y', strtotime('+2 weeks')); ?></p>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <form action="index.php?controller=book&action=borrow&id=<?php echo $book['id']; ?>" method="POST">
+                                <button type="submit" class="btn btn-success">Confirm Borrow</button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -108,7 +155,3 @@ if (!$result) {
         color: #198754 !important;
     }
 </style>
-
-<?php require_once("/xampp/htdocs/Cohort-PHP-Assignments/LMS/templates/footer.php");
-
-

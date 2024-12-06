@@ -1,5 +1,6 @@
 <?php
-require '../../config/database.php'; 
+session_start();
+require '../config/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = mysqli_real_escape_string($conn, $_POST['username']);
@@ -11,30 +12,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $check_result = mysqli_query($conn, $check_query);
 
     if (mysqli_num_rows($check_result) > 0) {
-        header('Location: ../../views/users/register.php?error=exists');
+        $_SESSION['error'] = "Username or email already exists!";
+        header('Location: /Cohort-PHP-Assignments/LMS/views/users/register.php');
         exit();
     } else {
         $query = "INSERT INTO users (username, email, password) VALUES ('$username', '$email', '$password')";
-        
+
         if (mysqli_query($conn, $query)) {
-            header('Location: ../../views/users/login.php?registered=success');
+            $_SESSION['success'] = "Registration successful! Please login.";
+            header('Location: /Cohort-PHP-Assignments/LMS/views/users/login.php');
             exit();
         } else {
-            header('Location: ../../views/users/register.php?error=failed');
+            $_SESSION['error'] = "Registration failed. Please try again.";
+            header('Location: /Cohort-PHP-Assignments/LMS/views/users/register.php');
             exit();
         }
     }
 }
-?> 
-
-<?php if (isset($_GET['error'])): ?>
-    <div class="alert alert-danger">
-        <?php 
-            if ($_GET['error'] == 'exists') {
-                echo "Username or email already exists!";
-            } elseif ($_GET['error'] == 'failed') {
-                echo "Registration failed. Please try again.";
-            }
-        ?>
-    </div>
-<?php endif; ?> 
