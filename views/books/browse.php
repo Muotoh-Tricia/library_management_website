@@ -91,7 +91,7 @@ if (!$result) {
                                 <p class="text-muted">By <?php echo htmlspecialchars($book['author']); ?></p>
                             </div>
                             <div class="mb-3">
-                                <strong>ISBN:</strong> 
+                                <strong>ISBN:</strong>
                                 <?php echo htmlspecialchars($book['isbn']); ?>
                             </div>
                             <div class="mb-3">

@@ -13,7 +13,7 @@ require_once '../../config/database.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Library Management System</title>
+    <title>Library Management System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
@@ -23,7 +23,6 @@ require_once '../../config/database.php';
         <div class="row justify-content-center">
             <div class="col-md-5">
                 <div class="text-center mb-4">
-
                     <h2 class="text-success fw-bold">Welcome Back!</h2>
                     <p class="text-muted">Please login to your account</p>
                 </div>

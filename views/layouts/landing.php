@@ -19,7 +19,8 @@
                 <div class="col-lg-6 text-center text-lg-start">
                     <h1 class="display-4 fw-bold text-success mb-4">Welcome to Our Library</h1>
                     <p class="lead mb-4">Your Gateway to Knowledge</p>
-                    <a href="../views/users/login.php" class="btn btn-success btn-lg px-4">Get Started</a>
+                    <a href="/Cohort-PHP-Assignments/LMS/views/users/login.php" class="btn btn-success btn-lg px-4">Get
+                        Started</a>
                 </div>
                 <div class="col-lg-6">
                     <img src="../../assets/book.jpg" class="img-fluid rounded" alt="Library">
@@ -27,6 +28,65 @@
             </div>
         </div>
     </div>
+
+    <?php if (isset($_SESSION['user_id'])): ?>
+        <div class="container py-5">
+            <div class="row mb-4">
+                <div class="col">
+                    <h2 class="text-success">My Borrowed Books</h2>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <?php
+                $user_id = $_SESSION['user_id'];
+                $query = "SELECT books.*, borrowings.return_date 
+                     FROM borrowings 
+                     JOIN books ON books.id = borrowings.book_id 
+                     WHERE borrowings.user_id = $user_id 
+                     AND borrowings.status = 'borrowed'";
+                $result = mysqli_query($conn, $query);
+
+                while ($book = mysqli_fetch_assoc($result)):
+                    ?>
+                    <div class="col-sm-6 col-md-4 col-lg-3">
+                        <div class="card h-100 border-success shadow-sm hover-shadow">
+                            <img src="<?php echo $book['image_url']; ?>" class="card-img-top p-3" alt="Book Cover"
+                                style="height: 200px; object-fit: cover;">
+
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title text-success">
+                                    <?php echo $book['title']; ?>
+                                </h5>
+
+                                <p class="card-text text-muted mb-1">
+                                    By <?php echo $book['author']; ?>
+                                </p>
+
+                                <div class="mt-auto">
+                                    <p class="card-text small mb-0">
+                                        <strong>Return Date:</strong><br>
+                                        <span class="text-danger">
+                                            <?php echo date('F j, Y', strtotime($book['return_date'])); ?>
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php endwhile; ?>
+
+                <?php if (mysqli_num_rows($result) == 0): ?>
+                    <div class="col-12">
+                        <div class="alert alert-success">
+                            <i class="bi bi-info-circle me-2"></i>
+                            You haven't borrowed any books yet.
+                        </div>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    <?php endif; ?>
 
     <!-- Features Section -->
     <div class="container py-5">
@@ -44,25 +104,26 @@
                 </a>
             </div>
 
-            <!-- Easy Borrowing Card -->
+            <!-- Recommendation Card -->
             <div class="col-md-4">
                 <a href="../views/books/borrow.php" class="text-decoration-none">
                     <div class="card h-100 border-success hover-card">
                         <div class="card-body text-center">
-                            <h3 class="card-title h4 text-success">Easy Borrowing</h3>
-                            <p class="card-text text-dark">Simple checkout process</p>
+                            <h3 class="card-title h4 text-success">Recommendation</h3>
+                            <p class="card-text text-dark">Recommended books based on past borrowing history or popular
+                                books</p>
                         </div>
                     </div>
                 </a>
             </div>
 
-            <!-- Digital Catalog Card -->
+            <!-- Borrowed Book Card -->
             <div class="col-md-4">
                 <a href="../views/books/catalog.php" class="text-decoration-none">
                     <div class="card h-100 border-success hover-card">
                         <div class="card-body text-center">
-                            <h3 class="card-title h4 text-success">Digital Catalog</h3>
-                            <p class="card-text text-dark">Search and find books easily</p>
+                            <h3 class="card-title h4 text-success">Borrowed Books</h3>
+                            <p class="card-text text-dark">List of currently borrowed books</p>
                         </div>
                     </div>
                 </a>

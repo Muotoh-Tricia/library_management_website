@@ -1,9 +1,20 @@
-<?php require_once '../views/layouts/main.php'; ?>
+<?php
+require_once '/xampp/htdocs/Cohort-PHP-Assignments/LMS/views/layouts/main.php';
+require_once '/xampp/htdocs/Cohort-PHP-Assignments/LMS/config/database.php';
+
+// Fetch books from database
+$query = "SELECT * FROM books ORDER BY title ASC";
+$books = mysqli_query($conn, $query);
+
+if (!$books) {
+    die("Query failed: " . mysqli_error($conn));
+}
+?>
 
 <div class="container">
     <h1>Library Books</h1>
     <a href="index.php?controller=book&action=create" class="btn">Add New Book</a>
-    
+
     <table>
         <thead>
             <tr>

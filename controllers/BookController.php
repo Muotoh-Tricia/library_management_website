@@ -81,7 +81,6 @@ class BookController
     public function borrow($id)
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Start session if not already started
             if (session_status() === PHP_SESSION_NONE) {
                 session_start();
             }
@@ -91,27 +90,44 @@ class BookController
             $result = mysqli_query($this->conn, $query);
             $book = mysqli_fetch_assoc($result);
 
-            if ($book && $book['status'] === 'available') {
-                // Update book status
-                $update_query = "UPDATE books SET status = 'borrowed' WHERE id = $id";
+            if ($book && $book['available_quantity'] > 0) {
+                // Start transaction
+                mysqli_begin_transaction($this->conn);
 
-                // Insert into borrowings table
-                $user_id = $_SESSION['user_id']; // Ensure this session variable is set
-                $borrow_date = date('Y-m-d');
-                $return_date = date('Y-m-d', strtotime('+2 weeks'));
+                try {
+                    // Update book quantity
+                    $update_query = "UPDATE books 
+                               SET available_quantity = available_quantity - 1 
+                               WHERE id = $id";
+                    mysqli_query($this->conn, $update_query);
 
-                $borrow_query = "INSERT INTO borrowings (user_id, book_id, borrow_date, return_date, status) 
-                                VALUES ($user_id, $id, '$borrow_date', '$return_date', 'active')";
+                    // Add borrowing record
+                    $user_id = $_SESSION['user_id'];
+                    $borrow_date = date('Y-m-d');
+                    $return_date = date('Y-m-d', strtotime('+2 weeks'));
 
-                if (mysqli_query($this->conn, $update_query) && mysqli_query($this->conn, $borrow_query)) {
-                    $_SESSION['success'] = "Book borrowed successfully";
-                } else {
-                    $_SESSION['error'] = "Error borrowing book: " . mysqli_error($this->conn);
+                    $borrow_query = "INSERT INTO borrowings (user_id, book_id, borrow_date, return_date, status) 
+                                VALUES ($user_id, $id, '$borrow_date', '$return_date', 'borrowed')";
+                    mysqli_query($this->conn, $borrow_query);
+
+                    // Add transaction record
+                    $transaction_query = "INSERT INTO transactions (user_id, book_id, transaction_type) 
+                                    VALUES ($user_id, $id, 'borrow')";
+                    mysqli_query($this->conn, $transaction_query);
+
+                    // If all queries successful, commit transaction
+                    mysqli_commit($this->conn);
+                    $_SESSION['borrow_success'] = true;
+                    $_SESSION['borrow_book_title'] = $book['title'];
+                } catch (Exception $e) {
+                    // If any query fails, rollback all changes
+                    mysqli_rollback($this->conn);
+                    $_SESSION['error'] = "Error processing transaction: " . $e->getMessage();
                 }
             } else {
                 $_SESSION['error'] = "Book is not available for borrowing";
             }
-            header('Location: index.php?controller=book&action=index');
+            header('Location: /Cohort-PHP-Assignments/LMS/views/books/browse.php');
             exit();
         }
     }

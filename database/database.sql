@@ -54,3 +54,13 @@ CREATE TABLE books (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE transactions (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    book_id INT,
+    transaction_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    transaction_type ENUM('borrow', 'return') NOT NULL,
+    status VARCHAR(50) DEFAULT 'completed',
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (book_id) REFERENCES books (id)
+);
