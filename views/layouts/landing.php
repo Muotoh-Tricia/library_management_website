@@ -48,7 +48,7 @@
                 $result = mysqli_query($conn, $query);
 
                 while ($book = mysqli_fetch_assoc($result)):
-                    ?>
+                ?>
                     <div class="col-sm-6 col-md-4 col-lg-3">
                         <div class="card h-100 border-success shadow-sm hover-shadow">
                             <img src="<?php echo $book['image_url']; ?>" class="card-img-top p-3" alt="Book Cover"
@@ -106,7 +106,7 @@
 
             <!-- Recommendation Card -->
             <div class="col-md-4">
-                <a href="../views/books/borrow.php" class="text-decoration-none">
+                <a href="" class="text-decoration-none">
                     <div class="card h-100 border-success hover-card">
                         <div class="card-body text-center">
                             <h3 class="card-title h4 text-success">Recommendation</h3>
@@ -119,7 +119,7 @@
 
             <!-- Borrowed Book Card -->
             <div class="col-md-4">
-                <a href="../views/books/catalog.php" class="text-decoration-none">
+                <a href="/Cohort-PHP-Assignments/LMS/views/books/borrowed_books.php" class="text-decoration-none">
                     <div class="card h-100 border-success hover-card">
                         <div class="card-body text-center">
                             <h3 class="card-title h4 text-success">Borrowed Books</h3>

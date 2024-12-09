@@ -14,7 +14,7 @@ class UserController {
     public function register() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($this->user->register($_POST)) {
-                header('Location: index.php?controller=auth&action=login');
+                header('Location: /Cohort-PHP-Assignments/LMS/views/users/login.php');
                 exit();
             }
         }
@@ -23,7 +23,7 @@ class UserController {
 
     public function profile() {
         if (!isset($_SESSION['user_id'])) {
-            header('Location: index.php?controller=auth&action=login');
+            header('Location: /Cohort-PHP-Assignments/LMS/views/users/login.php');
             exit();
         }
 
@@ -40,7 +40,7 @@ class UserController {
 
     public function updateProfile() {
         if (!isset($_SESSION['user_id'])) {
-            header('Location: index.php?controller=auth&action=login');
+            header('Location: /Cohort-PHP-Assignments/LMS/views/users/login.php');
             exit();
         }
 
@@ -70,7 +70,7 @@ class UserController {
             }
         }
 
-        header('Location: index.php?controller=user&action=profile');
+        header('Location: /Cohort-PHP-Assignments/LMS/views/users/profile.php');
         exit();
     }
 }

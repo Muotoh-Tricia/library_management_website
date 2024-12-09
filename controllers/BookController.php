@@ -1,10 +1,12 @@
 <?php
-require_once '../config/database.php';
-require_once '../models/Book.php';
+session_start();
+require_once('/xampp/htdocs/Cohort-PHP-Assignments/LMS/templates/header.php');
+require_once('/xampp/htdocs/Cohort-PHP-Assignments/LMS/config/database.php');
 
 class BookController
 {
     private $conn;
+    private $max_books_allowed = 3;
 
     public function __construct()
     {
@@ -12,124 +14,166 @@ class BookController
         $this->conn = $conn;
     }
 
-    public function index()
+    public function borrow()
     {
-        $query = "SELECT * FROM books ORDER BY title ASC";
-        $result = mysqli_query($this->conn, $query);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['book_id'])) {
+            $book_id = mysqli_real_escape_string($this->conn, $_POST['book_id']);
+            $user_id = $_SESSION['user_id'];
 
-        if (!$result) {
-            die("Query failed: " . mysqli_error($this->conn));
-        }
+            // Check if user has already borrowed this book
+            $check_query = "SELECT * FROM borrowings 
+                           WHERE user_id = $user_id 
+                           AND book_id = $book_id 
+                           AND status = 'borrowed'";
+            $check_result = mysqli_query($this->conn, $check_query);
 
-        require_once '../views/books/browse.php';
-    }
-
-    public function create()
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $title = mysqli_real_escape_string($this->conn, $_POST['title']);
-            $author = mysqli_real_escape_string($this->conn, $_POST['author']);
-            $isbn = mysqli_real_escape_string($this->conn, $_POST['isbn']);
-            $category = mysqli_real_escape_string($this->conn, $_POST['category']);
-            $description = mysqli_real_escape_string($this->conn, $_POST['description']);
-
-            $query = "INSERT INTO books (title, author, isbn, category, description, status) 
-                     VALUES ('$title', '$author', '$isbn', '$category', '$description', 'available')";
-
-            if (mysqli_query($this->conn, $query)) {
-                header('Location: index.php?controller=book&action=index');
+            if (mysqli_num_rows($check_result) > 0) {
+                $_SESSION['error'] = "You have already borrowed this book and haven't returned it yet.";
+                header('Location: /Cohort-PHP-Assignments/LMS/views/books/browse.php');
                 exit();
-            } else {
-                die("Error: " . mysqli_error($this->conn));
-            }
-        }
-        require_once '../views/books/create.php';
-    }
-
-    public function edit($id)
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $title = mysqli_real_escape_string($this->conn, $_POST['title']);
-            $author = mysqli_real_escape_string($this->conn, $_POST['author']);
-            $isbn = mysqli_real_escape_string($this->conn, $_POST['isbn']);
-            $category = mysqli_real_escape_string($this->conn, $_POST['category']);
-            $description = mysqli_real_escape_string($this->conn, $_POST['description']);
-
-            $query = "UPDATE books SET 
-                     title = '$title',
-                     author = '$author',
-                     isbn = '$isbn',
-                     category = '$category',
-                     description = '$description'
-                     WHERE id = $id";
-
-            if (mysqli_query($this->conn, $query)) {
-                header('Location: index.php?controller=book&action=index');
-                exit();
-            } else {
-                die("Error: " . mysqli_error($this->conn));
-            }
-        }
-
-        $query = "SELECT * FROM books WHERE id = $id";
-        $result = mysqli_query($this->conn, $query);
-        $book = mysqli_fetch_assoc($result);
-
-        require_once '../views/books/edit.php';
-    }
-
-    public function borrow($id)
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (session_status() === PHP_SESSION_NONE) {
-                session_start();
             }
 
-            // Get book details
-            $query = "SELECT * FROM books WHERE id = $id";
-            $result = mysqli_query($this->conn, $query);
-            $book = mysqli_fetch_assoc($result);
+            // Get the book details from the form
+            $book_title = $_POST['book_title'];
+            $book_author = $_POST['book_author'];
 
-            if ($book && $book['available_quantity'] > 0) {
-                // Start transaction
-                mysqli_begin_transaction($this->conn);
+            mysqli_begin_transaction($this->conn);
 
-                try {
-                    // Update book quantity
-                    $update_query = "UPDATE books 
-                               SET available_quantity = available_quantity - 1 
-                               WHERE id = $id";
-                    mysqli_query($this->conn, $update_query);
+            try {
+                // Update book quantity
+                $update_book = "UPDATE books 
+                               SET quantity = quantity - 1 
+                               WHERE id = $book_id 
+                               AND quantity > 0";
+                $result1 = mysqli_query($this->conn, $update_book);
 
-                    // Add borrowing record
-                    $user_id = $_SESSION['user_id'];
-                    $borrow_date = date('Y-m-d');
-                    $return_date = date('Y-m-d', strtotime('+2 weeks'));
+                // Create borrowing record
+                $return_date = date('Y-m-d', strtotime('+2 weeks'));
+                $insert_borrow = "INSERT INTO borrowings (user_id, book_id, borrow_date, return_date, status) 
+                                 VALUES ($user_id, $book_id, NOW(), '$return_date', 'borrowed')";
+                $result2 = mysqli_query($this->conn, $insert_borrow);
 
-                    $borrow_query = "INSERT INTO borrowings (user_id, book_id, borrow_date, return_date, status) 
-                                VALUES ($user_id, $id, '$borrow_date', '$return_date', 'borrowed')";
-                    mysqli_query($this->conn, $borrow_query);
-
-                    // Add transaction record
-                    $transaction_query = "INSERT INTO transactions (user_id, book_id, transaction_type) 
-                                    VALUES ($user_id, $id, 'borrow')";
-                    mysqli_query($this->conn, $transaction_query);
-
-                    // If all queries successful, commit transaction
+                if ($result1 && $result2) {
                     mysqli_commit($this->conn);
                     $_SESSION['borrow_success'] = true;
-                    $_SESSION['borrow_book_title'] = $book['title'];
-                } catch (Exception $e) {
-                    // If any query fails, rollback all changes
-                    mysqli_rollback($this->conn);
-                    $_SESSION['error'] = "Error processing transaction: " . $e->getMessage();
+                    $_SESSION['borrowed_book_title'] = $book_title;
+                    $_SESSION['borrowed_book_author'] = $book_author;
+                } else {
+                    throw new Exception("Failed to borrow book");
                 }
-            } else {
-                $_SESSION['error'] = "Book is not available for borrowing";
+            } catch (Exception $e) {
+                mysqli_rollback($this->conn);
+                $_SESSION['error'] = "Failed to borrow book: " . $e->getMessage();
             }
+
             header('Location: /Cohort-PHP-Assignments/LMS/views/books/browse.php');
             exit();
         }
     }
+
+    // Add this method to get user's borrowed books
+    public function getUserBorrowedBooks($user_id)
+    {
+        // Add debugging
+        $query = "SELECT b.*, br.borrow_date, br.return_date 
+                 FROM borrowings br 
+                 JOIN books b ON br.book_id = b.id 
+                 WHERE br.user_id = $user_id 
+                 AND br.status = 'borrowed'";
+        $result = mysqli_query($this->conn, $query);
+
+        if (!$result) {
+            error_log("Query failed: " . mysqli_error($this->conn));
+            return false;
+        }
+
+        return $result;
+    }
+
+    // Add this new method for returning books
+    public function returnBook()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['book_id'])) {
+            $book_id = mysqli_real_escape_string($this->conn, $_POST['book_id']);
+            $user_id = $_SESSION['user_id'];
+
+            mysqli_begin_transaction($this->conn);
+
+            try {
+                // Update borrowing status to 'returned'
+                $update_borrow = "UPDATE borrowings 
+                                 SET status = 'returned', 
+                                     actual_return_date = NOW() 
+                                 WHERE user_id = $user_id 
+                                 AND book_id = $book_id 
+                                 AND status = 'borrowed'";
+                $result1 = mysqli_query($this->conn, $update_borrow);
+
+                // Increase available quantity of the book
+                $update_book = "UPDATE books 
+                               SET quantity = quantity + 1 
+                               WHERE id = $book_id";
+                $result2 = mysqli_query($this->conn, $update_book);
+
+                if ($result1 && $result2) {
+                    mysqli_commit($this->conn);
+                    $_SESSION['return_success'] = true;
+                    $_SESSION['message'] = "Book has been returned successfully!";
+                } else {
+                    throw new Exception("Failed to return book");
+                }
+            } catch (Exception $e) {
+                mysqli_rollback($this->conn);
+                $_SESSION['error'] = "Failed to return book: " . $e->getMessage();
+            }
+
+            header('Location: /Cohort-PHP-Assignments/LMS/views/books/borrowed_books.php');
+            exit();
+        }
+    }
+
+    public function getOverdueBooks($user_id)
+    {
+        $query = "SELECT b.*, br.borrow_date, br.return_date 
+                 FROM borrowings br 
+                 JOIN books b ON br.book_id = b.id 
+                 WHERE br.user_id = $user_id 
+                 AND br.status = 'borrowed'
+                 AND br.return_date < NOW()";
+        return mysqli_query($this->conn, $query);
+    }
+
+    public function getReturnHistory($user_id)
+    {
+        $query = "SELECT b.*, 
+                        br.borrow_date, 
+                        br.return_date,
+                        br.actual_return_date,
+                        CASE 
+                            WHEN br.actual_return_date > br.return_date THEN 'Overdue'
+                            ELSE 'On Time'
+                        END as return_status
+                 FROM borrowings br 
+                 JOIN books b ON br.book_id = b.id 
+                 WHERE br.user_id = $user_id 
+                 AND br.status = 'returned'
+                 ORDER BY br.actual_return_date DESC";
+        return mysqli_query($this->conn, $query);
+    }
 }
+
+// Handle the request
+if (isset($_POST['action'])) {
+    $controller = new BookController();
+
+    switch ($_POST['action']) {
+        case 'borrow':
+            $controller->borrow();
+            break;
+        case 'return':
+            $controller->returnBook();
+            break;
+    }
+}
+
 
