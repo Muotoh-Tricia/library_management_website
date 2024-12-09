@@ -160,6 +160,51 @@ class BookController
                  ORDER BY br.actual_return_date DESC";
         return mysqli_query($this->conn, $query);
     }
+
+    public function getRecommendedBooks($user_id, $limit = 4)
+    {
+        // Get books similar to user's previously borrowed books (same author or category)
+        $similar_books_query = "
+            SELECT DISTINCT b.* 
+            FROM books b
+            JOIN borrowings br1 ON b.id != br1.book_id
+            WHERE b.author IN (
+                SELECT DISTINCT b2.author 
+                FROM borrowings br2
+                JOIN books b2 ON br2.book_id = b2.id
+                WHERE br2.user_id = $user_id
+            )
+            AND b.id NOT IN (
+                SELECT book_id 
+                FROM borrowings 
+                WHERE user_id = $user_id
+            )
+            LIMIT " . ($limit / 2);
+
+        // Get popular books (most borrowed books that user hasn't borrowed)
+        $popular_books_query = "
+            SELECT b.*, COUNT(br.id) as borrow_count
+            FROM books b
+            JOIN borrowings br ON b.id = br.book_id
+            WHERE b.id NOT IN (
+                SELECT book_id 
+                FROM borrowings 
+                WHERE user_id = $user_id
+            )
+            GROUP BY b.id
+            ORDER BY borrow_count DESC
+            LIMIT " . ($limit / 2);
+
+        $similar_books = mysqli_query($this->conn, $similar_books_query);
+        $popular_books = mysqli_query($this->conn, $popular_books_query);
+
+        $recommendations = [
+            'similar' => $similar_books ? mysqli_fetch_all($similar_books, MYSQLI_ASSOC) : [],
+            'popular' => $popular_books ? mysqli_fetch_all($popular_books, MYSQLI_ASSOC) : []
+        ];
+
+        return $recommendations;
+    }
 }
 
 // Handle the request
