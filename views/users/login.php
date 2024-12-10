@@ -84,12 +84,6 @@ require_once '../../config/database.php';
                         </form>
                     </div>
                 </div>
-
-                <div class="text-center mt-4">
-                    <p class="text-muted small">
-                        &copy; 2024 Library Management System. All rights reserved.
-                    </p>
-                </div>
             </div>
         </div>
     </div>

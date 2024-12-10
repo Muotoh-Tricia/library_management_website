@@ -6,7 +6,6 @@ class HomeController {
             header('Location: /Cohort-PHP-Assignments/LMS/views/books/browse.php');
             exit();
         }
-        // Otherwise show landing page
         require_once '../views/layouts/landing.php';
     }
 } 

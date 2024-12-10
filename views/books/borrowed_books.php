@@ -28,13 +28,13 @@ $borrowed_books = $bookController->getUserBorrowedBooks($user_id);
                 <?php echo $_SESSION['message']; ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
-            <?php 
-                unset($_SESSION['return_success']);
-                unset($_SESSION['message']);
+            <?php
+            unset($_SESSION['return_success']);
+            unset($_SESSION['message']);
             ?>
         <?php endif; ?>
 
-        
+
         <!-- Page Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="text-success mb-0">

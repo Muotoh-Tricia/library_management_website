@@ -71,10 +71,8 @@ class BookController
         }
     }
 
-    // Add this method to get user's borrowed books
     public function getUserBorrowedBooks($user_id)
     {
-        // Add debugging
         $query = "SELECT b.*, br.borrow_date, br.return_date 
                  FROM borrowings br 
                  JOIN books b ON br.book_id = b.id 
@@ -90,7 +88,6 @@ class BookController
         return $result;
     }
 
-    // Add this new method for returning books
     public function returnBook()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['book_id'])) {
@@ -220,5 +217,3 @@ if (isset($_POST['action'])) {
             break;
     }
 }
-
-
